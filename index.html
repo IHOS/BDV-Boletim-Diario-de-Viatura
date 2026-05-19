@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digitalização BDV - Choque</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-950 antialiased min-h-screen pb-12">
+
+    <main class="max-w-4xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md print:hidden">
+        <div class="text-center border-b pb-4 mb-6">
+            <h1 class="text-xl font-bold uppercase tracking-wide">Batalhão de Polícia de Choque (CPME)</h1>
+            <h2 class="text-lg font-semibold text-gray-700">Seção de Transporte - BDV Digital</h2>
+        </div>
+
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded text-sm text-amber-900 shadow-sm">
+            <p class="font-bold mb-1">⚠️ AVISO OBRIGATÓRIO:</p>
+            <p>Este documento é de caráter <strong>OBRIGATÓRIO</strong>. O não preenchimento deste acarretará em consequências danosas e medidas atinentes à sua falta. O motorista policial deverá conferir a viatura no momento da carga e da baixa, informando as alterações. A responsabilidade é <strong>INDIVIDUAL</strong>.</p>
+        </div>
+
+        <form id="bdvForm" class="space-y-6">
+            
+            <fieldset class="border p-4 rounded-md bg-gray-50/50">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">1. Identificação da Viatura e Serviço</legend>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Placa</label>
+                        <input type="text" id="input_placa" placeholder="XXX-XXXX" class="w-full border rounded p-2 text-sm uppercase" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Modelo</label>
+                        <input type="text" id="input_modelo" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Prefixo</label>
+                        <input type="text" id="input_prefixo" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Combustível</label>
+                        <div class="flex space-x-4 mt-2">
+                            <label class="inline-flex items-center text-sm"><input type="radio" name="combustivel" value="Diesel" class="mr-2" checked> Diesel</label>
+                            <label class="inline-flex items-center text-sm"><input type="radio" name="combustivel" value="Gasolina" class="mr-2"> Gasolina</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Viatura Padronizada?</label>
+                        <div class="flex space-x-4 mt-2">
+                            <label class="inline-flex items-center text-sm"><input type="radio" name="padronizada" value="Sim" class="mr-2" checked> Sim</label>
+                            <label class="inline-flex items-center text-sm"><input type="radio" name="padronizada" value="Não" class="mr-2"> Não</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Cartão Ticket Log N°</label>
+                        <input type="number" id="input_ticket" class="w-full border rounded p-2 text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase mb-1">Serviço / Destino</label>
+                        <input type="text" id="input_destino" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Telefone de Contato</label>
+                        <input type="tel" id="input_telefone" placeholder="(00) 00000-0000" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Data de Carga</label>
+                        <input type="date" id="input_data_carga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1">Data de Descarga</label>
+                        <input type="date" id="input_data_descarga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="border p-4 rounded-md bg-gray-50/50">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">2. Controle de Hodômetro e Horário</legend>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                    <div class="bg-blue-50/50 p-2 rounded border border-blue-100">
+                        <label class="block text-xs font-bold text-blue-800 uppercase mb-1">Carga: KM</label>
+                        <input type="number" id="input_km_carga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div class="bg-blue-50/50 p-2 rounded border border-blue-100">
+                        <label class="block text-xs font-bold text-blue-800 uppercase mb-1">Carga: Hora</label>
+                        <input type="time" id="input_hora_carga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div class="bg-green-50/50 p-2 rounded border border-green-100">
+                        <label class="block text-xs font-bold text-green-800 uppercase mb-1">Descarga: KM</label>
+                        <input type="number" id="input_km_descarga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div class="bg-green-50/50 p-2 rounded border border-green-100">
+                        <label class="block text-xs font-bold text-green-800 uppercase mb-1">Descarga: Hora</label>
+                        <input type="time" id="input_hora_descarga" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="border p-4 rounded-md">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">3. Alterações na Carga (Retirada)</legend>
+                <p class="text-xs text-amber-700 italic mb-2">📌 O policial da sala de meios deverá vistar as alterações anotadas.</p>
+                <textarea id="input_alt_carga" rows="2" placeholder="Relate avarias ou problemas mecânicos/estruturais identificados no momento da retirada..." class="w-full border rounded p-2 text-sm"></textarea>
+            </fieldset>
+
+            <fieldset class="border p-4 rounded-md bg-gray-50/50">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">4. Tabela de Verificação Obrigatória</legend>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mt-2">
+                    
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Nível de óleo do motor</span>
+                        <div class="space-x-2 text-xs">
+                            <label><input type="radio" name="chk_oleo" value="Bom" checked> Bom</label>
+                            <label><input type="radio" name="chk_oleo" value="Baixo"> Baixo</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Nível do fluido de arrefecimento</span>
+                        <div class="space-x-2 text-xs">
+                            <label><input type="radio" name="chk_arrefecimento" value="Bom" checked> Bom</label>
+                            <label><input type="radio" name="chk_arrefecimento" value="Baixo"> Baixo</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Nível de combustível</span>
+                        <div class="space-x-2 text-xs">
+                            <label><input type="radio" name="chk_combustivel" value="> 1/2" checked> &gt; 1/2</label>
+                            <label><input type="radio" name="chk_combustivel" value="< 1/2"> &lt; 1/2</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Nível de fluído de freios</span>
+                        <div class="space-x-2 text-xs">
+                            <label><input type="radio" name="chk_freio_fluido" value="Bom" checked> Bom</label>
+                            <label><input type="radio" name="chk_freio_fluido" value="Baixo"> Baixo</label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Macaco</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_macaco" value="SIM" checked> SIM</label>
+                            <label><input type="radio" name="chk_macaco" value="NÃO"> NÃO</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Triângulo</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_triangulo" value="SIM" checked> SIM</label>
+                            <label><input type="radio" name="chk_triangulo" value="NÃO"> NÃO</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Pneu reserva (Estepe)</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_estepe" value="SIM" checked> SIM</label>
+                            <label><input type="radio" name="chk_estepe" value="NÃO"> NÃO</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Para-brisa intacto</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_parabrisa" value="SIM" checked> SIM</label>
+                            <label><input type="radio" name="chk_parabrisa" value="NÃO"> NÃO</label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Condição do sistema de freios</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_freio_cond" value="BOM" checked> BOM</label>
+                            <label><input type="radio" name="chk_freio_cond" value="RUIM"> RUIM</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b">
+                        <span class="text-sm">Condição de embreagem</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_embreagem" value="BOM" checked> BOM</label>
+                            <label><input type="radio" name="chk_embreagem" value="RUIM"> RUIM</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b md:col-span-2">
+                        <span class="text-sm">Giroflex e sirene</span>
+                        <div class="space-x-4 text-xs">
+                            <label><input type="radio" name="chk_giroflex" value="BOM" checked> BOM</label>
+                            <label><input type="radio" name="chk_giroflex" value="RUIM"> RUIM</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="border p-4 rounded-md">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">5. Alterações na Descarga (Devolução)</legend>
+                <textarea id="input_alt_descarga" rows="2" placeholder="Relate avarias ou problemas identificados no ato da entrega da viatura..." class="w-full border rounded p-2 text-sm"></textarea>
+            </fieldset>
+
+            <fieldset class="border p-4 rounded-md bg-gray-50/50">
+                <legend class="text-sm font-bold uppercase tracking-wider text-gray-600 px-2">6. Controle de Assinaturas e Pessoal</legend>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div class="border p-3 rounded bg-white">
+                        <p class="text-xs font-bold uppercase text-blue-900 mb-2">Condutor da Viatura</p>
+                        <div class="space-y-2">
+                            <input type="text" id="input_motorista_nome" placeholder="Nome Completo do Motorista" class="w-full border rounded p-2 text-sm" required>
+                            <input type="text" id="input_motorista_id" placeholder="Cadastro / RE" class="w-full border rounded p-2 text-sm" required>
+                        </div>
+                    </div>
+                    <div class="border p-3 rounded bg-white">
+                        <p class="text-xs font-bold uppercase text-blue-900 mb-2">Sala de Meios</p>
+                        <input type="text" id="input_meios_nome" placeholder="Graduação / Nome do Plantonista" class="w-full border rounded p-2 text-sm" required>
+                    </div>
+                    <div class="border p-3 rounded bg-white md:col-span-2">
+                        <p class="text-xs font-bold uppercase text-blue-900 mb-2">Controle do STM (Seção de Transporte)</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <input type="text" id="input_stm_nome" placeholder="Graduação / Nome do Responsável" class="w-full border rounded p-2 text-sm">
+                            <input type="text" id="input_stm_id" placeholder="Cadastro" class="w-full border rounded p-2 text-sm">
+                            <textarea id="input_stm_obs" placeholder="Observações internas do STM..." class="w-full border rounded p-2 text-sm md:col-span-2" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="text-right">
+                <button type="button" onclick="gerarPDF()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded shadow transition-colors uppercase text-sm tracking-wider">
+                    🖨️ Gerar BDV (PDF)
+                </button>
+            </div>
+        </form>
+    </main>
+
+
+    <div class="hidden">
+        <div id="pdf-template" class="p-8 bg-white text-black text-[11px] leading-tight font-serif" style="width: 210mm; min-height: 297mm; box-sizing: border-box;">
+            
+            <div class="text-center font-bold uppercase mb-4 space-y-0.5 border-b-2 border-black pb-2">
+                <p>POLÍCIA MILITAR DO ESTADO</p>
+                <p>COMANDO DE POLICIAMENTO MISSÕES ESPECIAIS</p>
+                <p>BATALHÃO DE POLÍCIA DE CHOQUE</p>
+                <p class="text-sm mt-2 tracking-widest bg-black text-white py-1">BOLETIM DIÁRIO DE VIATURA (BDV)</p>
+            </div>
+
+            <div class="border border-black p-2 mb-4 text-justify font-sans text-[9px] bg-gray-50">
+                <strong>ADVERTÊNCIA:</strong> Este documento é de caráter OBRIGATÓRIO. O não preenchimento deste acarretará em consequências danosas e medidas atinentes à sua falta. O motorista policial deverá conferir a viatura no momento da carga e da baixa, informando as alterações. A responsabilidade é INDIVIDUAL.
+            </div>
+
+            <table class="w-full border-collapse border border-black mb-3">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="border border-black bg-gray-200 p-1 text-left font-bold uppercase">1. IDENTIFICAÇÃO E SERVIÇO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-black p-1 w-1/4"><strong>PLACA:</strong> <span id="pdf_placa"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>MODELO:</strong> <span id="pdf_modelo"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>PREFIXO:</strong> <span id="pdf_prefixo"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>TICKET LOG:</strong> <span id="pdf_ticket"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1"><strong>COMB.:</strong> <span id="pdf_combustivel"></span></td>
+                        <td class="border border-black p-1"><strong>PADRONIZADA:</strong> <span id="pdf_padronizada"></span></td>
+                        <td colspan="2" class="border border-black p-1"><strong>TELEFONE:</strong> <span id="pdf_telefone"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="border border-black p-1"><strong>DESTINO/SERVIÇO:</strong> <span id="pdf_destino"></span></td>
+                        <td class="border border-black p-1"><strong>DATA CARGA:</strong> <span id="pdf_data_carga"></span></td>
+                        <td class="border border-black p-1"><strong>DATA DESCARGA:</strong> <span id="pdf_data_descarga"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="w-full border-collapse border border-black mb-3 text-center">
+                <thead>
+                    <tr class="bg-gray-200 font-bold">
+                        <td colspan="2" class="border border-black p-1 w-1/2">CARGA (SAÍDA)</td>
+                        <td colspan="2" class="border border-black p-1 w-1/2">DESCARGA (RETORNO)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-black p-1 w-1/4"><strong>KM:</strong> <span id="pdf_km_carga"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>HORA:</strong> <span id="pdf_hora_carga"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>KM:</strong> <span id="pdf_km_descarga"></span></td>
+                        <td class="border border-black p-1 w-1/4"><strong>HORA:</strong> <span id="pdf_hora_descarga"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="border border-black mb-3">
+                <div class="bg-gray-200 p-1 font-bold border-b border-black uppercase text-[10px]">3. Alterações Registradas na Retirada (Visto da Sala de Meios)</div>
+                <div class="p-2 min-h-[40px] whitespace-pre-wrap italic" id="pdf_alt_carga">Nenhuma alteração registrada.</div>
+            </div>
+
+            <table class="w-full border-collapse border border-black mb-3">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="border border-black bg-gray-200 p-1 text-left font-bold uppercase">4. INSPEÇÃO OBRIGATÓRIA DA VIATURA</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf_checklist_corpo">
+                    </tbody>
+            </table>
+
+            <div class="border border-black mb-4">
+                <div class="bg-gray-200 p-1 font-bold border-b border-black uppercase text-[10px]">5. Alterações Registradas na Devolução</div>
+                <div class="p-2 min-h-[40px] whitespace-pre-wrap italic" id="pdf_alt_descarga">Nenhuma alteração registrada.</div>
+            </div>
+
+            <div class="border border-black p-3 bg-gray-50">
+                <p class="font-bold uppercase text-[10px] mb-4 text-gray-700">6. CONTROLE E ASSINATURAS</p>
+                
+                <div class="grid grid-cols-2 gap-8 mb-4">
+                    <div class="text-center mt-4">
+                        <div class="border-t border-black w-full mx-auto mb-1"></div>
+                        <p class="font-bold" id="pdf_motorista_nome">CONDUTOR DA VIATURA</p>
+                        <p class="text-[10px]">Cad/RE: <span id="pdf_motorista_id"></span></p>
+                    </div>
+                    <div class="text-center mt-4">
+                        <div class="border-t border-black w-full mx-auto mb-1"></div>
+                        <p class="font-bold" id="pdf_meios_nome">SALA DE MEIOS (PLANTONISTA)</p>
+                        <p class="text-[10px]">Visto Físico / Digital</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-dashed border-black my-3"></div>
+
+                <div>
+                    <p class="font-bold uppercase mb-1 text-gray-800">Controle Interno do STM:</p>
+                    <p class="mb-2"><strong>Responsável pelo Recebimento:</strong> <span id="pdf_stm_nome"></span> (Cad: <span id="pdf_stm_id"></span>)</p>
+                    <p class="text-[10px] bg-white p-2 border italic"><strong>Observações Gerais do STM:</strong> <span id="pdf_stm_obs"></span></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function mapearDados() {
+            // Mapeamentos Diretos Simples
+            document.getElementById('pdf_placa').innerText = document.getElementById('input_placa').value;
+            document.getElementById('pdf_modelo').innerText = document.getElementById('input_modelo').value;
+            document.getElementById('pdf_prefixo').innerText = document.getElementById('input_prefixo').value;
+            document.getElementById('pdf_ticket').innerText = document.getElementById('input_ticket').value || "N/I";
+            document.getElementById('pdf_destino').innerText = document.getElementById('input_destino').value;
+            document.getElementById('pdf_telefone').innerText = document.getElementById('input_telefone').value;
+            
+            // Tratamento de Datas (Formatando para PT-BR DD/MM/AAAA)
+            const formatarData = (id) => {
+                const val = document.getElementById(id).value;
+                if(!val) return "___/___/______";
+                const [ano, mes, dia] = val.split('-');
+                return `${dia}/${mes}/${ano}`;
+            };
+            document.getElementById('pdf_data_carga').innerText = formatarData('input_data_carga');
+            document.getElementById('pdf_data_descarga').innerText = formatarData('input_data_descarga');
+
+            // Radios Simples
+            document.getElementById('pdf_combustivel').innerText = document.querySelector('name="combustivel":checked')?.value || "Diesel";
+            document.getElementById('pdf_padronizada').innerText = document.querySelector('name="padronizada":checked')?.value || "Sim";
+
+            // Quilometragem e Horas
+            document.getElementById('pdf_km_carga').innerText = document.getElementById('input_km_carga').value;
+            document.getElementById('pdf_hora_carga').innerText = document.getElementById('input_hora_carga').value;
+            document.getElementById('pdf_km_descarga').innerText = document.getElementById('input_km_descarga').value;
+            document.getElementById('pdf_hora_descarga').innerText = document.getElementById('input_hora_descarga').value;
+
+            // Observações/Texto Livre
+            document.getElementById('pdf_alt_carga').innerText = document.getElementById('input_alt_carga').value.trim() || "NENHUMA ALTERAÇÃO CONSTATADA NA RETIRADA.";
+            document.getElementById('pdf_alt_descarga').innerText = document.getElementById('input_alt_descarga').value.trim() || "NENHUMA ALTERAÇÃO CONSTATADA NA DEVOLUÇÃO.";
+
+            // Controle de Pessoal
+            document.getElementById('pdf_motorista_nome').innerText = document.getElementById('input_motorista_nome').value.toUpperCase();
+            document.getElementById('pdf_motorista_id').innerText = document.getElementById('input_motorista_id').value;
+            document.getElementById('pdf_meios_nome').innerText = document.getElementById('input_meios_nome').value.toUpperCase() + " (SALA DE MEIOS)";
+            
+            document.getElementById('pdf_stm_nome').innerText = document.getElementById('input_stm_nome').value || "________________________";
+            document.getElementById('pdf_stm_id').innerText = document.getElementById('input_stm_id').value || "______";
+            document.getElementById('pdf_stm_obs').innerText = document.getElementById('input_stm_obs').value.trim() || "Sem observações adicionais.";
+
+            // Montagem Dinâmica da Tabela de Checklist no PDF (Visual Militar Tradicional)
+            const checklistCorpo = document.getElementById('pdf_checklist_corpo');
+            checklistCorpo.innerHTML = ""; // Limpa anterior
+
+            const itensChecklist = [
+                { nome: "Nível de óleo do motor", campo: "chk_oleo", ops: ["Bom", "Baixo"] },
+                { nome: "Nível do fluido de arrefecimento", campo: "chk_arrefecimento", ops: ["Bom", "Baixo"] },
+                { nome: "Nível de combustível", campo: "chk_combustivel", ops: ["> 1/2", "< 1/2"] },
+                { nome: "Nível de fluído de freios", campo: "chk_freio_fluido", ops: ["Bom", "Baixo"] },
+                { nome: "Macaco", campo: "chk_macaco", ops: ["SIM", "NÃO"] },
+                { nome: "Triângulo", campo: "chk_triangulo", ops: ["SIM", "NÃO"] },
+                { nome: "Pneu reserva (Estepe)", campo: "chk_estepe", ops: ["SIM", "NÃO"] },
+                { nome: "Para-brisa intacto", campo: "chk_parabrisa", ops: ["SIM", "NÃO"] },
+                { nome: "Condição do sistema de freios", campo: "chk_freio_cond", ops: ["BOM", "RUIM"] },
+                { nome: "Condição de embreagem", campo: "chk_embreagem", ops: ["BOM", "RUIM"] },
+                { nome: "Giroflex e sirene", campo: "chk_giroflex", ops: ["BOM", "RUIM"] }
+            ];
+
+            // Renderiza em duas colunas paralelas para economizar espaço vertical (Layout A4 inteligente)
+            for(let i = 0; i < itensChecklist.length; i += 2) {
+                const item1 = itensChecklist[i];
+                const item2 = itensChecklist[i+1];
+
+                const escolhadoItem1 = document.querySelector(`name="${item1.campo}":checked`)?.value;
+                const opt1_item1 = item1.ops[0] === escolhadoItem1 ? "[ X ]" : "[   ]";
+                const opt2_item1 = item1.ops[1] === escolhadoItem1 ? "[ X ]" : "[   ]";
+
+                let txtItem2 = "";
+                let opt1_item2 = "";
+                let opt2_item2 = "";
+
+                if (item2) {
+                    const escolhadoItem2 = document.querySelector(`name="${item2.campo}":checked`)?.value;
+                    txtItem2 = item2.nome;
+                    opt1_item2 = item2.ops[0] === escolhadoItem2 ? "[ X ]" : "[   ]";
+                    opt2_item2 = item2.ops[1] === escolhadoItem2 ? "[ X ]" : "[   ]";
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border border-black p-1 w-[30%]"><strong>${item1.nome}</strong></td>
+                    <td class="border border-black p-1 text-center w-[20%] text-[10px] font-mono">${opt1_item1} ${item1.ops[0]} &nbsp; ${opt2_item1} ${item1.ops[1]}</td>
+                    <td class="border border-black p-1 w-[30%]"><strong>${txtItem2}</strong></td>
+                    <td class="border border-black p-1 text-center w-[20%] text-[10px] font-mono">${item2 ? `${opt1_item2} ${item2.ops[0]} &nbsp; ${opt2_item2} ${item2.ops[1]}` : ''}</td>
+                `;
+                checklistCorpo.appendChild(tr);
+            }
+        }
+
+        function gerarPDF() {
+            const form = document.getElementById('bdvForm');
+            
+            // Dispara validação padrão do HTML5 nos campos "required" antes de gerar
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Injeta dados do formulário nas posições do documento físico
+            mapearDados();
+
+            // Pega o elemento oculto que configuramos como papel A4
+            const elementoAlvo = document.getElementById('pdf-template');
+            
+            // Configurações do motor html2pdf para gerar um documento límpido
+            const configuracoes = {
+                margin:       8,
+                filename:     `BDV_PREFIXO_${document.getElementById('input_prefixo').value || 'CHOQUE'}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, logging: false, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Executa o pipeline: Clona elemento -> Torna Visível Temporariamente no escopo do canvas -> Cospe o PDF -> Mantém o DOM original limpo.
+            html2pdf().set(configuracoes).from(elementoAlvo).save();
+        }
+    </script>
+</body>
+</html>
